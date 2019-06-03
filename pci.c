@@ -69,6 +69,10 @@ static struct workqueue_struct *nvme_workq;
 struct nvme_dev;
 struct nvme_queue;
 
+//jsA
+spinlock_t rb_lock;
+sector_t seq_sector_num;
+
 static int nvme_reset(struct nvme_dev *dev);
 static void nvme_process_cq(struct nvme_queue *nvmeq);
 static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
@@ -582,6 +586,29 @@ static int nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
 	struct nvme_command cmnd;
 	unsigned map_len;
 	int ret = BLK_MQ_RQ_QUEUE_OK;
+
+	//no req or req->bio then goto out
+	if(!req)
+		goto jsA_end_seq;
+
+	if(!req->bio)
+		goto jsA_end_seq;
+
+	//jsA -read
+	if (req_op(req) == REQ_OP_READ){
+
+	}
+	//jsA - write
+	else if (req_op(req) == REQ_OP_WRITE){
+		spin_lock(&rb_lock);
+		__sync_fetch_and_add(&seq_sector_num,8);
+		req->__sector = seq_sector_num;
+		req->bio->bi_iter.bi_sector = seq_sector_num;
+		spin_unlock(&rb_lock);
+	}
+
+jsA_end_seq:
+
 
 	/*
 	 * If formated with metadata, require the block layer provide a buffer
@@ -2126,6 +2153,9 @@ static struct pci_driver nvme_driver = {
 static int __init nvme_init(void)
 {
 	int result;
+
+	//jsA
+	spin_lock_init(&rb_lock);
 
 	nvme_workq = alloc_workqueue("nvme", WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
 	if (!nvme_workq)

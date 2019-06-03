@@ -2192,6 +2192,10 @@ static void __exit nvme_exit(void)
 	pci_unregister_driver(&nvme_driver);
 	destroy_workqueue(nvme_workq);
 	_nvme_check_size();
+
+	//jsA print time
+	printk("nvme_exit\n");
+	printk("nvme_queue_rq_time: %llu, nvme_queue_rq_count: %llu\n", nvme_queue_rq_time, nvme_queue_rq_count);
 }
 
 MODULE_AUTHOR("Matthew Wilcox <willy@linux.intel.com>");

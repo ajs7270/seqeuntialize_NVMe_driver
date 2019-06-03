@@ -46,6 +46,9 @@
 
 #include "nvme.h"
 
+//jsA time measure implementation 
+#include "calclock.h"
+
 #define NVME_Q_DEPTH		1024
 #define NVME_AQ_DEPTH		256
 #define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
@@ -69,9 +72,12 @@ static struct workqueue_struct *nvme_workq;
 struct nvme_dev;
 struct nvme_queue;
 
-//jsA
+//jsA sequentializer core
 spinlock_t rb_lock;
 sector_t seq_sector_num;
+
+//jsA time save variable
+unsigned long long nvme_queue_rq_time, nvme_queue_rq_count;
 
 static int nvme_reset(struct nvme_dev *dev);
 static void nvme_process_cq(struct nvme_queue *nvmeq);
@@ -576,7 +582,7 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
 /*
  * NOTE: ns is NULL when called on the admin queue.
  */
-static int nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+static int nvme_queue_rq_internal(struct blk_mq_hw_ctx *hctx,
 			 const struct blk_mq_queue_data *bd)
 {
 	struct nvme_ns *ns = hctx->queue->queuedata;
@@ -657,6 +663,20 @@ jsA_end_seq:
 out:
 	nvme_free_iod(dev, req);
 	return ret;
+}
+
+//jsA seperate logic for time measure
+static int nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+			 const struct blk_mq_queue_data *bd)
+{
+	int return_result;
+	struct timespec local_time[2];
+	getrawmonotonic(&local_time[0]);
+	return_result = nvme_queue_rq_internal(hctx,bd);
+	getrawmonotonic(&local_time[1]);
+	calclock(local_time, &nvme_queue_rq_time, &nvme_queue_rq_count);
+
+	return return_result;
 }
 
 static void nvme_complete_rq(struct request *req)

@@ -12,3 +12,15 @@ nvme-y					+= pci.o
 nvme-fabrics-y				+= fabrics.o
 
 nvme-rdma-y				+= rdma.o
+
+KDIR :=/lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
+
+default:
+	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+
+clean:
+	rm *.mod.*
+	rm *.ko
+	rm *.o

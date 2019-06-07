@@ -49,10 +49,18 @@
 //jsA time measure implementation 
 #include "calclock.h"
 
+//jsA for rb_tree
+#include <linux/rbtree.h>
+#include <linux/vmalloc.h>
+
 #define NVME_Q_DEPTH		1024
 #define NVME_AQ_DEPTH		256
 #define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
 #define CQ_SIZE(depth)		(depth * sizeof(struct nvme_completion))
+
+//jsA define true & false
+#define TRUE	1
+#define FALSE	0
 		
 /*
  * We handle AEN commands ourselves and don't even let the
@@ -78,6 +86,17 @@ sector_t seq_sector_num;
 
 //jsA time save variable
 unsigned long long nvme_queue_rq_time, nvme_queue_rq_count;
+
+//jsA rb_tree root variable
+struct rb_root seq_root = RB_ROOT;
+
+//jsA rb_node type
+struct seq_nvme_type {
+        struct rb_node node;
+        sector_t origin_sector;
+        sector_t seq_sector;
+};
+
 
 static int nvme_reset(struct nvme_dev *dev);
 static void nvme_process_cq(struct nvme_queue *nvmeq);
@@ -578,6 +597,74 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
 
 	nvme_free_iod(dev, req);
 }
+//jsA TODO sequentialize using rb_tree
+// insert function insert seq_sector and origin_sector
+int nvme_seq_insert(struct rb_root *root, struct seq_nvme_type *data) {
+        struct rb_node **new = &(root->rb_node), *parent = NULL;
+
+        /* Figure out where to put new node */
+        while(*new){
+                struct seq_nvme_type *this = container_of(*new, struct seq_nvme_type, node);
+                int result = data->origin_sector - this->origin_sector;
+                
+                parent = *new;
+                
+                if (result < 0)
+                        new = &((*new)->rb_left);
+                else if (result > 0)
+                        new = &((*new)->rb_right);
+                else    
+                        return FALSE; // 이미 node가 존재하니까 false
+        }
+
+        /* Add new node and rebalance tree. */
+        rb_link_node(&data->node, parent, new);
+        rb_insert_color(&data->node, root);
+
+        return TRUE;
+}
+
+// search function find seq_sector using origin_sector
+struct seq_nvme_type *seq_nvme_search(struct rb_root *root, sector_t origin_sector)
+{       
+        struct rb_node *node = root->rb_node;
+        
+        while (node){
+                struct seq_nvme_type *data = container_of(node, struct seq_nvme_type, node);
+                //printk("data->origin_sector: %llu\norigin_sector: %llu\n", data->origin_sector, origin_sector);
+                int result = origin_sector - data->origin_sector;
+                
+                if (result < 0)
+                        node = node->rb_left;
+                else if (result > 0)
+                        node = node->rb_right;
+                else    
+                        return data;
+        }
+        return NULL;
+}
+
+// create new node
+struct seq_nvme_type* seq_node_create(sector_t origin, sector_t seq)
+{       
+        struct seq_nvme_type* new_node = (struct seq_nvme_type*)vmalloc(sizeof(struct seq_nvme_type));
+        
+        new_node->origin_sector = origin;
+        new_node->seq_sector = seq;
+        
+        return new_node;
+}
+
+// destroying an rbtree
+void rb_destroy(struct rb_root * root)
+{       
+        struct rb_node *root_node = root->rb_node;
+        
+        if(root_node){
+                rb_erase(root_node->rb_left, root);
+                rb_erase(root_node->rb_right, root);
+        }
+}
 
 /*
  * NOTE: ns is NULL when called on the admin queue.
@@ -606,10 +693,23 @@ static int nvme_queue_rq_internal(struct blk_mq_hw_ctx *hctx,
 	}
 	//jsA - write
 	else if (req_op(req) == REQ_OP_WRITE){
+				
 		spin_lock(&rb_lock);
-		__sync_fetch_and_add(&seq_sector_num,8);
+		// sequentialize core
+		__sync_fetch_and_add(&seq_sector_num,8); 
 		req->__sector = seq_sector_num;
 		req->bio->bi_iter.bi_sector = seq_sector_num;
+		unsigned long long temp_seq_sector_num = seq_sector_num;
+		spin_unlock(&rb_lock);
+
+		//rbtree insert
+		//struct seq_nvme_type* new_node = seq_node_create(req->__sector, seq_sector_num);
+		struct seq_nvme_type* new_node = (struct seq_nvme_type*)kmalloc(sizeof(struct seq_nvme_type),GFP_USER);
+		new_node->origin_sector = req->__sector;
+		new_node->seq_sector = temp_seq_sector_num;
+
+		spin_lock(&rb_lock);
+		nvme_seq_insert(&seq_root, new_node); // insert node
 		spin_unlock(&rb_lock);
 	}
 
@@ -2196,6 +2296,7 @@ static void __exit nvme_exit(void)
 	//jsA print time
 	printk("nvme_exit\n");
 	printk("nvme_queue_rq_time: %llu, nvme_queue_rq_count: %llu\n", nvme_queue_rq_time, nvme_queue_rq_count);
+	rb_destroy(&seq_root);
 }
 
 MODULE_AUTHOR("Matthew Wilcox <willy@linux.intel.com>");

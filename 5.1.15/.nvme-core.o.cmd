@@ -1,1 +1,1 @@
-cmd_/root/nvme_new/nvme-core.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /root/nvme_new/nvme-core.o /root/nvme_new/core.o /root/nvme_new/trace.o /root/nvme_new/lightnvm.o 
+cmd_/home/dcslab/0528/5.1.15/nvme-core.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /home/dcslab/0528/5.1.15/nvme-core.o /home/dcslab/0528/5.1.15/core.o /home/dcslab/0528/5.1.15/trace.o /home/dcslab/0528/5.1.15/lightnvm.o 

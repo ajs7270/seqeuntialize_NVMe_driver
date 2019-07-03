@@ -1,8 +1,8 @@
-cmd_/root/nvme_new/core.o := gcc -Wp,-MD,/root/nvme_new/.core.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/5/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -fno-var-tracking-assignments -g -gdwarf-4 -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/root/nvme_new  -DMODULE  -DKBUILD_BASENAME='"core"' -DKBUILD_MODNAME='"nvme_core"' -c -o /root/nvme_new/core.o /root/nvme_new/core.c
+cmd_/home/dcslab/0528/5.1.15/core.o := gcc -Wp,-MD,/home/dcslab/0528/5.1.15/.core.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/5/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -fno-var-tracking-assignments -g -gdwarf-4 -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/home/dcslab/0528/5.1.15  -DMODULE  -DKBUILD_BASENAME='"core"' -DKBUILD_MODNAME='"nvme_core"' -c -o /home/dcslab/0528/5.1.15/core.o /home/dcslab/0528/5.1.15/core.c
 
-source_/root/nvme_new/core.o := /root/nvme_new/core.c
+source_/home/dcslab/0528/5.1.15/core.o := /home/dcslab/0528/5.1.15/core.c
 
-deps_/root/nvme_new/core.o := \
+deps_/home/dcslab/0528/5.1.15/core.o := \
     $(wildcard include/config/blk/dev/integrity.h) \
     $(wildcard include/config/nvme/multipath.h) \
     $(wildcard include/config/blk/sed/opal.h) \
@@ -1017,14 +1017,14 @@ deps_/root/nvme_new/core.o := \
   arch/x86/include/asm/unaligned.h \
   include/linux/unaligned/access_ok.h \
   include/linux/unaligned/generic.h \
-  /root/nvme_new/trace.h \
+  /home/dcslab/0528/5.1.15/trace.h \
   include/linux/nvme.h \
   include/linux/tracepoint.h \
     $(wildcard include/config/have/syscall/tracepoints.h) \
     $(wildcard include/config/tracepoint.h) \
   include/linux/trace_seq.h \
   include/linux/seq_buf.h \
-  /root/nvme_new/nvme.h \
+  /home/dcslab/0528/5.1.15/nvme.h \
     $(wildcard include/config/fault/injection/debug/fs.h) \
   include/linux/cdev.h \
   include/linux/pci.h \
@@ -1090,8 +1090,8 @@ deps_/root/nvme_new/core.o := \
   include/uapi/linux/sed-opal.h \
   include/linux/fault-inject.h \
   include/trace/define_trace.h \
-  /root/nvme_new/./trace.h \
-  /root/nvme_new/./nvme.h \
+  /home/dcslab/0528/5.1.15/./trace.h \
+  /home/dcslab/0528/5.1.15/./nvme.h \
   include/trace/trace_events.h \
   include/linux/trace_events.h \
     $(wildcard include/config/kprobe/events.h) \
@@ -1212,7 +1212,7 @@ deps_/root/nvme_new/core.o := \
     $(wildcard include/config/cgroup/debug.h) \
   include/trace/perf.h \
   include/trace/bpf_probe.h \
-  /root/nvme_new/fabrics.h \
+  /home/dcslab/0528/5.1.15/fabrics.h \
   include/linux/in.h \
   include/uapi/linux/in.h \
   include/linux/inet.h \
@@ -1322,6 +1322,6 @@ deps_/root/nvme_new/core.o := \
   include/uapi/linux/if_packet.h \
   include/linux/seq_file_net.h \
 
-/root/nvme_new/core.o: $(deps_/root/nvme_new/core.o)
+/home/dcslab/0528/5.1.15/core.o: $(deps_/home/dcslab/0528/5.1.15/core.o)
 
-$(deps_/root/nvme_new/core.o):
+$(deps_/home/dcslab/0528/5.1.15/core.o):

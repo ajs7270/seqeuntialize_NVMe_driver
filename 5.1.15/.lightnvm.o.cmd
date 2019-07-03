@@ -1,8 +1,8 @@
-cmd_/root/nvme_new/lightnvm.o := gcc -Wp,-MD,/root/nvme_new/.lightnvm.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/5/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -fno-var-tracking-assignments -g -gdwarf-4 -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/root/nvme_new  -DMODULE  -DKBUILD_BASENAME='"lightnvm"' -DKBUILD_MODNAME='"nvme_core"' -c -o /root/nvme_new/lightnvm.o /root/nvme_new/lightnvm.c
+cmd_/home/dcslab/0528/5.1.15/lightnvm.o := gcc -Wp,-MD,/home/dcslab/0528/5.1.15/.lightnvm.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/5/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -fno-var-tracking-assignments -g -gdwarf-4 -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/home/dcslab/0528/5.1.15  -DMODULE  -DKBUILD_BASENAME='"lightnvm"' -DKBUILD_MODNAME='"nvme_core"' -c -o /home/dcslab/0528/5.1.15/lightnvm.o /home/dcslab/0528/5.1.15/lightnvm.c
 
-source_/root/nvme_new/lightnvm.o := /root/nvme_new/lightnvm.c
+source_/home/dcslab/0528/5.1.15/lightnvm.o := /home/dcslab/0528/5.1.15/lightnvm.c
 
-deps_/root/nvme_new/lightnvm.o := \
+deps_/home/dcslab/0528/5.1.15/lightnvm.o := \
   include/linux/kconfig.h \
     $(wildcard include/config/cpu/big/endian.h) \
     $(wildcard include/config/booger.h) \
@@ -16,7 +16,7 @@ deps_/root/nvme_new/lightnvm.o := \
   include/linux/compiler-gcc.h \
     $(wildcard include/config/retpoline.h) \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
-  /root/nvme_new/nvme.h \
+  /home/dcslab/0528/5.1.15/nvme.h \
     $(wildcard include/config/nvme/multipath.h) \
     $(wildcard include/config/fault/injection/debug/fs.h) \
     $(wildcard include/config/nvm.h) \
@@ -992,6 +992,6 @@ deps_/root/nvme_new/lightnvm.o := \
     $(wildcard include/config/energy/model.h) \
     $(wildcard include/config/cpu/freq/gov/schedutil.h) \
 
-/root/nvme_new/lightnvm.o: $(deps_/root/nvme_new/lightnvm.o)
+/home/dcslab/0528/5.1.15/lightnvm.o: $(deps_/home/dcslab/0528/5.1.15/lightnvm.o)
 
-$(deps_/root/nvme_new/lightnvm.o):
+$(deps_/home/dcslab/0528/5.1.15/lightnvm.o):

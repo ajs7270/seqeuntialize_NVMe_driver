@@ -1,3 +1,3 @@
-/root/nvme_new/nvme.ko
-/root/nvme_new/pci.o
+/home/dcslab/0528/5.1.15/nvme.ko
+/home/dcslab/0528/5.1.15/pci.o
 

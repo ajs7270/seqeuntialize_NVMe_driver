@@ -1,3 +1,3 @@
-/root/nvme_new/nvme-core.ko
-/root/nvme_new/core.o /root/nvme_new/trace.o /root/nvme_new/lightnvm.o
+/home/dcslab/0528/5.1.15/nvme-core.ko
+/home/dcslab/0528/5.1.15/core.o /home/dcslab/0528/5.1.15/trace.o /home/dcslab/0528/5.1.15/lightnvm.o
 

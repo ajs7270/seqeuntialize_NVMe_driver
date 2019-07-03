@@ -1,4 +1,4 @@
-core.o: /root/nvme_new/core.c include/linux/kconfig.h \
+core.o: /home/dcslab/0528/5.1.15/core.c include/linux/kconfig.h \
  include/generated/autoconf.h include/linux/compiler_types.h \
  include/linux/compiler_attributes.h include/linux/compiler-gcc.h \
  include/linux/blkdev.h include/linux/sched.h include/uapi/linux/sched.h \
@@ -241,8 +241,9 @@ core.o: /root/nvme_new/core.c include/linux/kconfig.h \
  include/uapi/linux/nvme_ioctl.h include/linux/t10-pi.h \
  include/linux/pm_qos.h arch/x86/include/asm/unaligned.h \
  include/linux/unaligned/access_ok.h include/linux/unaligned/generic.h \
- /root/nvme_new/trace.h include/linux/nvme.h include/linux/tracepoint.h \
- include/linux/trace_seq.h include/linux/seq_buf.h /root/nvme_new/nvme.h \
+ /home/dcslab/0528/5.1.15/trace.h include/linux/nvme.h \
+ include/linux/tracepoint.h include/linux/trace_seq.h \
+ include/linux/seq_buf.h /home/dcslab/0528/5.1.15/nvme.h \
  include/linux/cdev.h include/linux/pci.h include/linux/mod_devicetable.h \
  include/linux/interrupt.h include/linux/irqreturn.h \
  include/linux/irqnr.h include/uapi/linux/irqnr.h \
@@ -260,7 +261,7 @@ core.o: /root/nvme_new/core.c include/linux/kconfig.h \
  include/uapi/linux/lightnvm.h include/linux/file.h \
  include/linux/sed-opal.h include/uapi/linux/sed-opal.h \
  include/linux/fault-inject.h include/trace/define_trace.h \
- /root/nvme_new/./trace.h /root/nvme_new/./nvme.h \
+ /home/dcslab/0528/5.1.15/./trace.h /home/dcslab/0528/5.1.15/./nvme.h \
  include/trace/trace_events.h include/linux/trace_events.h \
  include/linux/ring_buffer.h include/linux/seq_file.h \
  include/linux/poll.h include/uapi/linux/poll.h \
@@ -298,20 +299,20 @@ core.o: /root/nvme_new/core.c include/linux/kconfig.h \
  include/linux/bpf-cgroup.h include/linux/bpf.h include/uapi/linux/bpf.h \
  include/uapi/linux/bpf_common.h include/linux/bpf_types.h \
  include/linux/cgroup_subsys.h include/trace/perf.h \
- include/trace/bpf_probe.h /root/nvme_new/fabrics.h include/linux/in.h \
- include/uapi/linux/in.h include/linux/inet.h include/net/net_namespace.h \
- include/net/flow.h include/linux/in6.h include/uapi/linux/in6.h \
- include/net/flow_dissector.h include/uapi/linux/if_ether.h \
- include/net/netns/core.h include/net/netns/mib.h include/net/snmp.h \
- include/uapi/linux/snmp.h include/net/netns/unix.h \
- include/net/netns/packet.h include/net/netns/ipv4.h \
- include/net/inet_frag.h include/linux/siphash.h include/net/netns/ipv6.h \
- include/net/dst_ops.h include/net/netns/ieee802154_6lowpan.h \
- include/net/netns/sctp.h include/net/netns/dccp.h \
- include/net/netns/netfilter.h include/linux/netfilter_defs.h \
- include/uapi/linux/netfilter.h include/net/netns/x_tables.h \
- include/net/netns/conntrack.h include/linux/list_nulls.h \
- include/linux/netfilter/nf_conntrack_tcp.h \
+ include/trace/bpf_probe.h /home/dcslab/0528/5.1.15/fabrics.h \
+ include/linux/in.h include/uapi/linux/in.h include/linux/inet.h \
+ include/net/net_namespace.h include/net/flow.h include/linux/in6.h \
+ include/uapi/linux/in6.h include/net/flow_dissector.h \
+ include/uapi/linux/if_ether.h include/net/netns/core.h \
+ include/net/netns/mib.h include/net/snmp.h include/uapi/linux/snmp.h \
+ include/net/netns/unix.h include/net/netns/packet.h \
+ include/net/netns/ipv4.h include/net/inet_frag.h include/linux/siphash.h \
+ include/net/netns/ipv6.h include/net/dst_ops.h \
+ include/net/netns/ieee802154_6lowpan.h include/net/netns/sctp.h \
+ include/net/netns/dccp.h include/net/netns/netfilter.h \
+ include/linux/netfilter_defs.h include/uapi/linux/netfilter.h \
+ include/net/netns/x_tables.h include/net/netns/conntrack.h \
+ include/linux/list_nulls.h include/linux/netfilter/nf_conntrack_tcp.h \
  include/uapi/linux/netfilter/nf_conntrack_tcp.h \
  include/linux/netfilter/nf_conntrack_dccp.h \
  include/uapi/linux/netfilter/nf_conntrack_tuple_common.h \

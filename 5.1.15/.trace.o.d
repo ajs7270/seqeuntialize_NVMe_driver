@@ -1,4 +1,4 @@
-trace.o: /root/nvme_new/trace.c include/linux/kconfig.h \
+trace.o: /home/dcslab/0528/5.1.15/trace.c include/linux/kconfig.h \
  include/generated/autoconf.h include/linux/compiler_types.h \
  include/linux/compiler_attributes.h include/linux/compiler-gcc.h \
  arch/x86/include/asm/unaligned.h include/linux/unaligned/access_ok.h \
@@ -39,8 +39,8 @@ trace.o: /root/nvme_new/trace.c include/linux/kconfig.h \
  include/linux/jump_label.h arch/x86/include/asm/jump_label.h \
  include/linux/build_bug.h arch/x86/include/asm/div64.h \
  include/asm-generic/div64.h include/linux/unaligned/generic.h \
- /root/nvme_new/trace.h include/linux/nvme.h include/linux/uuid.h \
- include/uapi/linux/uuid.h include/linux/string.h \
+ /home/dcslab/0528/5.1.15/trace.h include/linux/nvme.h \
+ include/linux/uuid.h include/uapi/linux/uuid.h include/linux/string.h \
  include/uapi/linux/string.h arch/x86/include/asm/string.h \
  arch/x86/include/asm/string_64.h include/linux/tracepoint.h \
  include/linux/smp.h include/linux/errno.h include/uapi/linux/errno.h \
@@ -195,15 +195,15 @@ trace.o: /root/nvme_new/trace.c include/linux/kconfig.h \
  include/linux/dqblk_v1.h include/linux/dqblk_v2.h \
  include/linux/dqblk_qtree.h include/linux/projid.h \
  include/uapi/linux/quota.h include/linux/nfs_fs_i.h \
- /root/nvme_new/nvme.h include/linux/cdev.h include/linux/kobject.h \
- include/linux/sysfs.h include/linux/kernfs.h include/linux/idr.h \
- include/linux/kobject_ns.h include/linux/kref.h include/linux/device.h \
- include/linux/ioport.h include/linux/klist.h include/linux/pm.h \
- include/linux/ratelimit.h arch/x86/include/asm/device.h \
- include/linux/pm_wakeup.h include/linux/pci.h \
- include/linux/mod_devicetable.h include/linux/interrupt.h \
- include/linux/irqreturn.h include/linux/irqnr.h \
- include/uapi/linux/irqnr.h include/linux/hardirq.h \
+ /home/dcslab/0528/5.1.15/nvme.h include/linux/cdev.h \
+ include/linux/kobject.h include/linux/sysfs.h include/linux/kernfs.h \
+ include/linux/idr.h include/linux/kobject_ns.h include/linux/kref.h \
+ include/linux/device.h include/linux/ioport.h include/linux/klist.h \
+ include/linux/pm.h include/linux/ratelimit.h \
+ arch/x86/include/asm/device.h include/linux/pm_wakeup.h \
+ include/linux/pci.h include/linux/mod_devicetable.h \
+ include/linux/interrupt.h include/linux/irqreturn.h \
+ include/linux/irqnr.h include/uapi/linux/irqnr.h include/linux/hardirq.h \
  include/linux/ftrace_irq.h include/linux/vtime.h \
  include/linux/context_tracking_state.h arch/x86/include/asm/irq.h \
  arch/x86/include/asm/sections.h include/asm-generic/sections.h \

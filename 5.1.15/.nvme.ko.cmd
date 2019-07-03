@@ -1,1 +1,1 @@
-cmd_/root/nvme_new/nvme.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds  --build-id  -o /root/nvme_new/nvme.ko /root/nvme_new/nvme.o /root/nvme_new/nvme.mod.o ;  true
+cmd_/home/dcslab/0528/5.1.15/nvme.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds  --build-id  -o /home/dcslab/0528/5.1.15/nvme.ko /home/dcslab/0528/5.1.15/nvme.o /home/dcslab/0528/5.1.15/nvme.mod.o ;  true

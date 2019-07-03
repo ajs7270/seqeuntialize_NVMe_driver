@@ -1,0 +1,2 @@
+kernel//root/nvme_new/nvme-core.ko
+kernel//root/nvme_new/nvme.ko

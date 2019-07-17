@@ -46,22 +46,28 @@
 
 #include "nvme.h"
 
-//jsA time measure implementation 
+//ajs time measure implementation 
 #include "calclock.h"
 
-//jsA for rb_tree
+//ajs for rb_tree
 #include <linux/rbtree.h>
 #include <linux/vmalloc.h>
+
+//ajs persistent
+#include "mapfile.h"
+#define REMAP_TABLE_SIZE 44
+#define SECTOR_SIZE 22 // unsigned long long is 20 + '\0' is 2
+		
 
 #define NVME_Q_DEPTH		1024
 #define NVME_AQ_DEPTH		256
 #define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
 #define CQ_SIZE(depth)		(depth * sizeof(struct nvme_completion))
 
-//jsA define true & false
+//ajs define true & false
 #define TRUE	1
 #define FALSE	0
-		
+
 /*
  * We handle AEN commands ourselves and don't even let the
  * block layer know about them.
@@ -80,9 +86,22 @@ static struct workqueue_struct *nvme_workq;
 struct nvme_dev;
 struct nvme_queue;
 
-//jsA sequentializer core
+//ajs sequentializer core
 spinlock_t rb_lock;
 sector_t seq_sector_num;
+
+//ajs rb_node type
+struct seq_nvme_type {
+        struct rb_node node;
+        sector_t origin_sector;
+        sector_t seq_sector;
+};
+
+//ajs rbtree function
+int nvme_seq_insert(struct rb_root *root, struct seq_nvme_type *data);
+struct seq_nvme_type *seq_nvme_search(struct rb_root *root, sector_t origin_sector);
+struct seq_nvme_type* seq_node_create(sector_t origin, sector_t seq);
+void rb_destroy(struct rb_root *root);
 
 //jsA time save variable
 unsigned long long nvme_queue_rq_time, nvme_queue_rq_count;
@@ -90,12 +109,73 @@ unsigned long long nvme_queue_rq_time, nvme_queue_rq_count;
 //jsA rb_tree root variable
 struct rb_root seq_root = RB_ROOT;
 
-//jsA rb_node type
-struct seq_nvme_type {
-        struct rb_node node;
-        sector_t origin_sector;
-        sector_t seq_sector;
-};
+
+//ajs persistent 
+int curPos;
+int read_map_file(struct file *map_file, struct rb_root *root, unsigned long long *read_pos)
+{
+	/*
+	 * 1. first file read 
+	 * 2. add rb_tree
+	 */
+        int num_of_read_char;
+        unsigned long long  origin_sector_num, seq_sector_num;
+        struct seq_nvme_type* new_node;
+
+        //make buffer to load origin_sector and seq_sector
+        unsigned char* buffer = (unsigned char *)kmalloc(sizeof(unsigned char)*REMAP_TABLE_SIZE,GFP_USER);
+
+        //remapping table open  
+        if (NULL != map_file)
+        {
+                //printk("read_pos : %d",*read_pos);                                              
+
+                while(num_of_read_char = file_read(map_file, *read_pos, buffer, REMAP_TABLE_SIZE)){
+
+                        kstrtoll(buffer, 10, &origin_sector_num);
+                        kstrtoll(buffer + SECTOR_SIZE, 10, &seq_sector_num);
+
+                        *read_pos += REMAP_TABLE_SIZE;
+
+                        //insert to TREE
+                        new_node = seq_node_create((sector_t)origin_sector_num,(sector_t)seq_sector_num);
+                        nvme_seq_insert(root,new_node);
+		} 
+	}
+}
+int write_map_file(struct file *map_file, char* file_path, struct rb_root *root)
+{
+        struct rb_node *node;
+        struct seq_nvme_type *data;
+
+        char origin_temp[REMAP_TABLE_SIZE];
+        char seq_temp[REMAP_TABLE_SIZE];
+
+        unsigned long long offset = 0;
+
+        //tree traversal
+        for(node = rb_first(root); node; node = rb_next(node)){
+                data = container_of(node, struct seq_nvme_type, node);
+
+                //printk("data->origin_sector : %llu\n", data->origin_sector);
+                //printk("data->seq_sector : %llu\n", data->seq_sector);
+
+                //save to map_file
+                sprintf(origin_temp,"%llu",data->origin_sector);
+                sprintf(seq_temp,"%llu", data->seq_sector);
+
+                //printk("write_temp: origin_temp: %s\n",data->origin_sector);
+                //printk("write_temp: seq_temp: %s\n", data->seq_sector);
+
+                file_write(map_file, offset, origin_temp, SECTOR_SIZE);
+                offset += SECTOR_SIZE;
+                file_write(map_file, offset, seq_temp, SECTOR_SIZE);
+                offset += SECTOR_SIZE;
+
+                memset(origin_temp, 0, REMAP_TABLE_SIZE);
+                memset(seq_temp, 0, REMAP_TABLE_SIZE);
+        }
+}
 
 
 static int nvme_reset(struct nvme_dev *dev);
@@ -689,23 +769,48 @@ static int nvme_queue_rq_internal(struct blk_mq_hw_ctx *hctx,
 
 	//jsA -read
 	if (req_op(req) == REQ_OP_READ){
+		printk("try rb_tree read : %llu\n",req->__sector);
+		printk("bio bi_iter.bi_size: %u\n",req->bio->bi_iter.bi_size);
+		printk("bio bi_iter.bi_idx: %u\n",req->bio->bi_iter.bi_idx);
+		//printk("bio bi_iter.bi_bvec_done: %u\n",req->bio->bi_iter.bi_bvec_done);
+		//printk("bio bi_io_vec->bv_offset: %u\n",req->bio->bi_io_vec->bv_offset);
+		//printk("bio bi_io_vec->bv_len: %u\n",req->bio->bi_io_vec->bv_len);
+		spin_lock(&rb_lock);
+		struct seq_nvme_type* find_node = seq_nvme_search(&seq_root, req->__sector);
+		if(find_node){
+			sector_t seq_sector = rb_entry(&(find_node->node), struct seq_nvme_type, node)->seq_sector;
+			sector_t ori_sector = rb_entry(&(find_node->node), struct seq_nvme_type, node)->origin_sector;
+			printk("rb_tree read (ori): %llu\n",ori_sector);
+			printk("rb_tree read (seq): %llu\n",seq_sector);
+			req->__sector = seq_sector;
+			req->bio->bi_iter.bi_sector = seq_sector;
+		}
+		spin_unlock(&rb_lock);
+
 
 	}
 	//jsA - write
 	else if (req_op(req) == REQ_OP_WRITE){
 				
 		spin_lock(&rb_lock);
+		printk("insert rb_tree write : %llu",req->__sector);
+		printk("bio bi_iter.bi_size: %u\n",req->bio->bi_iter.bi_size);
+		printk("bio bi_iter.bi_idx: %u\n",req->bio->bi_iter.bi_idx);
+		//printk("bio bi_iter.bi_bvec_done: %u\n",req->bio->bi_iter.bi_bvec_done);
+		//printk("bio bi_io_vec->bv_offset: %u\n",req->bio->bi_io_vec->bv_offset);
+		//printk("bio bi_io_vec->bv_len: %u\n",req->bio->bi_io_vec->bv_len);
 		// sequentialize core
 		__sync_fetch_and_add(&seq_sector_num,8); 
+		unsigned long long temp_seq_sector_num = seq_sector_num;
+		unsigned long long temp_ori_sector_num = req->__sector;
 		req->__sector = seq_sector_num;
 		req->bio->bi_iter.bi_sector = seq_sector_num;
-		unsigned long long temp_seq_sector_num = seq_sector_num;
 		spin_unlock(&rb_lock);
 
 		//rbtree insert
 		//struct seq_nvme_type* new_node = seq_node_create(req->__sector, seq_sector_num);
-		struct seq_nvme_type* new_node = (struct seq_nvme_type*)kmalloc(sizeof(struct seq_nvme_type),GFP_USER);
-		new_node->origin_sector = req->__sector;
+		struct seq_nvme_type* new_node = (struct seq_nvme_type*)kmalloc(sizeof(struct seq_nvme_type),GFP_KERNEL);
+		new_node->origin_sector = temp_ori_sector_num;
 		new_node->seq_sector = temp_seq_sector_num;
 
 		spin_lock(&rb_lock);
@@ -2276,6 +2381,7 @@ static int __init nvme_init(void)
 
 	//jsA
 	spin_lock_init(&rb_lock);
+	seq_sector_num = 1000000; // 백만으로 임의의 수를 넣어 줌.
 
 	nvme_workq = alloc_workqueue("nvme", WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
 	if (!nvme_workq)

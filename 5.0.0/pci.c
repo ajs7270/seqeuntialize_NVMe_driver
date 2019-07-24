@@ -35,6 +35,11 @@
 #include "trace.h"
 #include "nvme.h"
 
+//ajs persistent
+#include "mapfile.h"
+#define REMAP_TABLE_SIZE 44
+#define SECTOR_SIZE 22 // unsigned long long is 20 + '\0' is 2
+
 #define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
 #define CQ_SIZE(depth)		(depth * sizeof(struct nvme_completion))
 
@@ -46,6 +51,37 @@
  */
 #define NVME_MAX_KB_SZ	4096
 #define NVME_MAX_SEGS	127
+
+//ajs define true & false
+#define TRUE    1
+#define FALSE   0
+
+//ajs sequentializer core
+spinlock_t rb_lock;
+sector_t seq_sector_num;
+
+//ajs rb_node type
+struct seq_nvme_type {
+        struct rb_node node;
+        sector_t origin_sector;
+        sector_t seq_sector;
+};
+
+//ajs rbtree function
+int nvme_seq_insert(struct rb_root *root, struct seq_nvme_type *data);
+struct seq_nvme_type *seq_nvme_search(struct rb_root *root, sector_t origin_sector);
+struct seq_nvme_type* seq_node_create(sector_t origin, sector_t seq);
+void rb_destroy(struct rb_root *root);
+
+//ajs time save variable
+unsigned long long nvme_queue_rq_time, nvme_queue_rq_count;
+
+//ajs rb_tree root variable
+struct rb_root seq_root = RB_ROOT;
+
+//ajs for persistent
+int read_map_file(struct file *map_file, struct rb_root *root, unsigned long long *read_pos);
+int write_map_file(struct file *map_file, char* file_path, struct rb_root *root);
 
 static int use_threaded_interrupts;
 module_param(use_threaded_interrupts, int, 0);
@@ -911,6 +947,143 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
 	nvme_free_iod(dev, req);
 }
 
+//ajs for sequentialize
+// insert function insert seq_sector and origin_sector
+int nvme_seq_insert(struct rb_root *root, struct seq_nvme_type *data) {
+        struct rb_node **new = &(root->rb_node), *parent = NULL;
+
+        /* Figure out where to put new node */
+        while(*new){
+                struct seq_nvme_type *this = container_of(*new, struct seq_nvme_type, node);
+                int result = data->origin_sector - this->origin_sector;
+
+                parent = *new;
+
+                if (result < 0)
+                        new = &((*new)->rb_left);
+                else if (result > 0)
+                        new = &((*new)->rb_right);
+                else
+                        return FALSE; // 이미 node가 존재하니까 false
+        }
+
+        /* Add new node and rebalance tree. */
+        rb_link_node(&data->node, parent, new);
+        rb_insert_color(&data->node, root);
+
+        return TRUE;
+}
+
+// search function find seq_sector using origin_sector
+struct seq_nvme_type *seq_nvme_search(struct rb_root *root, sector_t origin_sector)
+{
+        struct rb_node *node = root->rb_node;
+
+        while (node){
+                struct seq_nvme_type *data = container_of(node, struct seq_nvme_type, node);
+                //printk("data->origin_sector: %llu\norigin_sector: %llu\n", data->origin_sector, origin_sector);
+                int result = origin_sector - data->origin_sector;
+
+                if (result < 0)
+                        node = node->rb_left;
+                else if (result > 0)
+                        node = node->rb_right;
+                else
+                        return data;
+        }
+        return NULL;
+}
+
+// create new node
+struct seq_nvme_type* seq_node_create(sector_t origin, sector_t seq)
+{
+        struct seq_nvme_type* new_node = (struct seq_nvme_type*)vmalloc(sizeof(struct seq_nvme_type));
+
+        new_node->origin_sector = origin;
+        new_node->seq_sector = seq;
+
+        return new_node;
+}
+
+// destroying an rbtree
+void rb_destroy(struct rb_root * root)
+{
+        struct rb_node *root_node = root->rb_node;
+
+        if(root_node){
+                rb_erase(root_node->rb_left, root);
+                rb_erase(root_node->rb_right, root);
+        }
+}
+
+//ajs for persistent
+int read_map_file(struct file *map_file, struct rb_root *root, unsigned long long *read_pos)
+{
+        /*
+         * 1. first file read 
+         * 2. add rb_tree
+         */
+        int num_of_read_char;
+        unsigned long long  origin_sector_num, seq_sector_num;
+        struct seq_nvme_type* new_node;
+
+        //make buffer to load origin_sector and seq_sector
+        unsigned char* buffer = (unsigned char *)kmalloc(sizeof(unsigned char)*REMAP_TABLE_SIZE,GFP_USER);
+
+        //remapping table open  
+        if (NULL != map_file)
+        {
+                //printk("read_pos : %d",*read_pos);                                              
+
+                while(num_of_read_char = file_read(map_file, *read_pos, buffer, REMAP_TABLE_SIZE)){
+
+                        kstrtoll(buffer, 10, &origin_sector_num);
+                        kstrtoll(buffer + SECTOR_SIZE, 10, &seq_sector_num);
+
+                        *read_pos += REMAP_TABLE_SIZE;
+
+                        //insert to TREE
+                        new_node = seq_node_create((sector_t)origin_sector_num,(sector_t)seq_sector_num);
+                        nvme_seq_insert(root,new_node);
+                }
+        }
+}
+
+int write_map_file(struct file *map_file, char* file_path, struct rb_root *root)
+{
+        struct rb_node *node;
+        struct seq_nvme_type *data;
+
+        char origin_temp[REMAP_TABLE_SIZE];
+        char seq_temp[REMAP_TABLE_SIZE];
+
+        unsigned long long offset = 0;
+
+        //tree traversal
+        for(node = rb_first(root); node; node = rb_next(node)){
+                data = container_of(node, struct seq_nvme_type, node);
+
+                //printk("data->origin_sector : %llu\n", data->origin_sector);
+                //printk("data->seq_sector : %llu\n", data->seq_sector);
+
+                //save to map_file
+                sprintf(origin_temp,"%llu",data->origin_sector);
+                sprintf(seq_temp,"%llu", data->seq_sector);
+
+                //printk("write_temp: origin_temp: %s\n",data->origin_sector);
+                //printk("write_temp: seq_temp: %s\n", data->seq_sector);
+
+                file_write(map_file, offset, origin_temp, SECTOR_SIZE);
+                offset += SECTOR_SIZE;
+                file_write(map_file, offset, seq_temp, SECTOR_SIZE);
+                offset += SECTOR_SIZE;
+
+                memset(origin_temp, 0, REMAP_TABLE_SIZE);
+                memset(seq_temp, 0, REMAP_TABLE_SIZE);
+        }
+}
+
+
 /*
  * NOTE: ns is NULL when called on the admin queue.
  */
@@ -924,6 +1097,23 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
 	struct nvme_command cmnd;
 	blk_status_t ret;
 
+	//ajs
+	if(!req)
+		goto ajs_end_seq;
+	if(!req->bio)
+		goto ajs_end_seq;
+
+	//ajs - read
+	if (req_op(req) == REQ_OP_READ){
+		printk("read\n");	
+	}
+	
+	//ajs -write
+	if (req_op(req) == REQ_OP_WRITE){
+		printk("write\n");	
+	}
+ajs_end_seq:
+	
 	/*
 	 * We should not need to do this, but we're still using this to
 	 * ensure we can drain requests on a dying queue.
@@ -3024,6 +3214,12 @@ static struct pci_driver nvme_driver = {
 
 static int __init nvme_init(void)
 {
+	//ajs
+	spin_lock_init(&rb_lock);
+        seq_sector_num = 1000000; // 백만으로 임의의 수를 넣어 줌.
+	printk("nvme_init\n");
+
+
 	return pci_register_driver(&nvme_driver);
 }
 

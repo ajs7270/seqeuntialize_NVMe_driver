@@ -39,8 +39,8 @@
 #include "mapfile.h"
 #include <linux/delay.h>
 
-#define REMAP_TABLE_SIZE 44
-#define SECTOR_SIZE 22 // unsigned long long is 10 + '\0' is 1
+#define REMAP_TABLE_SIZE 22
+#define SECTOR_SIZE 11 // unsigned long long is 10 + '\0' is 1
 
 #define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
 #define CQ_SIZE(depth)		(depth * sizeof(struct nvme_completion))
@@ -1088,12 +1088,11 @@ int guard_metadata(struct file *map_file)
 		printk("start:\n");
        		while(num_of_read_char = file_read(map_file, read_pos, buffer, REMAP_TABLE_SIZE)){
 
-                        kstrtoull(buffer, 10 , &start_point);
-                        kstrtoull(buffer + SECTOR_SIZE, 10 , &end_point);
+                        kstrtoll(buffer, SECTOR_SIZE, &start_point);
+                        kstrtoll(buffer + SECTOR_SIZE, SECTOR_SIZE, &end_point);
 
-			printk("num_of_read_char : %d\n",num_of_read_char);
-			printk("%dth start_point : %llu\n",index, start_point);
-                        printk("%dth end_point : %llu\n",index, end_point);
+			printk("start_point : %llu\n",start_point);
+                        printk("end_point : %llu\n",end_point);
 			ndelay(1000);
 
 
@@ -1105,12 +1104,8 @@ int guard_metadata(struct file *map_file)
 			 * so multiply start_point with 8
 			 */
 
-			free_block_list[index].start_point = start_point * 8;
-			free_block_list[index].end_point = end_point * 8;
-			printk("%dth list start_point : %llu\n",index,free_block_list[index].start_point);
-                        printk("%dth list end_point : %llu\n",index,free_block_list[index].end_point);
-			ndelay(1000);
-
+			free_block_list[index].start_point = start_point;
+			free_block_list[index].end_point = end_point;
 			index++;
                 }
 		free_list_size = index;
@@ -1151,24 +1146,6 @@ int write_map_file(struct file *map_file, char* file_path, struct rb_root *root)
         }
 }
 
-int binary_search(struct free_blocks *arr,int size, int value)
-{
-	int start = 0;
-	int end = size;
-	int mid; 
-	while (start + 1 != end){
-		mid = (start + end) / 2;
-		if(arr[mid].start_point < value){
-			start = mid;	
-		}else if(arr[mid].start_point > value){
-			end = mid;
-		}else{
-			return mid;
-		}
-	}
-	return start;
-}
-
 
 /*
  * NOTE: ns is NULL when called on the admin queue.
@@ -1196,54 +1173,32 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
                 if(find_node){ 
                         sector_t seq_sector = rb_entry(&(find_node->node), struct seq_nvme_type, node)->seq_sector; 
                         sector_t ori_sector = rb_entry(&(find_node->node), struct seq_nvme_type, node)->origin_sector; 
-                        printk("rb_tree read (ori): %llu\n",ori_sector); 
-                        printk("rb_tree read (seq): %llu\n",seq_sector); 
+                        //printk("rb_tree read (ori): %llu\n",ori_sector); 
+                        //printk("rb_tree read (seq): %llu\n",seq_sector); 
                         req->__sector = seq_sector; 
                         req->bio->bi_iter.bi_sector = seq_sector; 
                 } 
                 spin_unlock(&rb_lock);	
-		printk("read - current sector: %llu\n", req->__sector); 
 	}
 	
 	//ajs -write
 	if (req_op(req) == REQ_OP_WRITE){
 		
                 unsigned long long temp_seq_sector_num;
-	
-		// super block test
-		if(free_block_list[0].start_point > req->__sector){
-			//printk("free_block_list[0].start_point: %llu\n", free_block_list[0].start_point);
-			//printk("write - current sector: %llu\n", req->__sector); 
-			goto ajs_end_seq;
-		}
-
-		spin_lock(&rb_lock);
-		int start_index = binary_search(free_block_list, free_list_size, req->__sector);
-		spin_unlock(&rb_lock);
-
-		if(free_block_list[start_index].end_point < req->__sector){
-			//printk("free_block_list[%d].end_point : %llu\n",start_index,free_block_list[start_index].end_point);
-			if(start_index + 1 < free_list_size){
-				//printk("free_block_list[%d].start_point: %llu\n", start_index, free_block_list[start_index].start_point);
-			}
-			//printk("write - current sector: %llu\n", req->__sector); 
-			//printk("goto!!\n");
-			goto ajs_end_seq;
-		}
 
                 // sequentialize core
 		spin_lock(&rb_lock);
 		while(TRUE){
 			if(free_block_list[cur_seq_freeblock].start_point	\
 				+ free_block_list[cur_seq_freeblock].used_offset + 8 	\
-				> free_block_list[cur_seq_freeblock].end_point)
+				< free_block_list[cur_seq_freeblock].end_point)
 			{
 				cur_seq_freeblock++;
 			}
 			else
 			{
                 		temp_seq_sector_num = free_block_list[cur_seq_freeblock].start_point	\
-						    	+ __sync_fetch_and_add(&free_block_list[cur_seq_freeblock].used_offset,8);
+						    	+ free_block_list[cur_seq_freeblock].used_offset + 8;
 				break;
 			}
 		}
@@ -1263,8 +1218,7 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
                 req->__sector = temp_seq_sector_num;
                 req->bio->bi_iter.bi_sector = temp_seq_sector_num;
 
-		//printk("ajs: ori : %llu\n", new_node->origin_sector); 
-		//printk("ajs: seq : %llu\n",temp_seq_sector_num);
+		printk("ajs: seq : %llu\n",temp_seq_sector_num);
 	}
 ajs_end_seq:
 	
@@ -3382,16 +3336,12 @@ static int __init nvme_init(void)
 	printk("free_block_list[0].startpoint: %llu\n",free_block_list[0].start_point);
 	printk("free_block_list[0].endpoint: %llu\n",free_block_list[0].end_point);
 	printk("free_block_list[0].used_offset: %llu\n",free_block_list[0].used_offset);
-	udelay(10);
-
+	
 	int i;
 	for(i = 0; i < free_list_size; i++){
-                printk("free_block_list[%d].startpoint: %llu\n", i, free_block_list[i].start_point);
-                printk("free_block_list[%d].endpoint: %llu\n", i, free_block_list[i].end_point);
-                printk("free_block_list[%d].used_offset: %llu\n", i, free_block_list[i].used_offset);
-		udelay(10);
-		
-		
+                printk("free_block_list[i].startpoint: %llu\n",free_block_list[i].start_point);
+                printk("free_block_list[i].endpoint: %llu\n",free_block_list[i].end_point);
+                printk("free_block_list[i].used_offset: %llu\n",free_block_list[i].used_offset);
 	}
 
 	return pci_register_driver(&nvme_driver);

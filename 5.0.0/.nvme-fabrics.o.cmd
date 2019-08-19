@@ -1,1 +1,1 @@
-cmd_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fabrics.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fabrics.o /home/syslab/Downloads/linux-5.0/drivers/nvme/host/fabrics.o 
+cmd_/home/syslab/Downloads/0528/5.0.0/nvme-fabrics.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /home/syslab/Downloads/0528/5.0.0/nvme-fabrics.o /home/syslab/Downloads/0528/5.0.0/fabrics.o 

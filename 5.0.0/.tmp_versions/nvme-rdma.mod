@@ -1,3 +1,3 @@
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-rdma.ko
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o
+/home/syslab/Downloads/0528/5.0.0/nvme-rdma.ko
+/home/syslab/Downloads/0528/5.0.0/rdma.o
 

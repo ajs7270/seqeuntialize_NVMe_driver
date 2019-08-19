@@ -1,3 +1,3 @@
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fabrics.ko
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/fabrics.o
+/home/syslab/Downloads/0528/5.0.0/nvme-fabrics.ko
+/home/syslab/Downloads/0528/5.0.0/fabrics.o
 

@@ -1,3 +1,3 @@
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fc.ko
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/fc.o
+/home/syslab/Downloads/0528/5.0.0/nvme-fc.ko
+/home/syslab/Downloads/0528/5.0.0/fc.o
 

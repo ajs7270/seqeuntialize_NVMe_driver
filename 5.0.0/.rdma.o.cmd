@@ -1,8 +1,8 @@
-cmd_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o := gcc -Wp,-MD,/home/syslab/Downloads/linux-5.0/drivers/nvme/host/.rdma.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/8/include  -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Iubuntu/include  -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror-implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -Wno-int-in-bool-context -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wno-stringop-truncation -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -fmacro-prefix-map=./= -Wno-packed-not-aligned -I/home/syslab/Downloads/linux-5.0/drivers/nvme/host  -DMODULE  -DKBUILD_BASENAME='"rdma"' -DKBUILD_MODNAME='"nvme_rdma"' -c -o /home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o /home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.c
+cmd_/home/syslab/Downloads/0528/5.0.0/rdma.o := gcc -Wp,-MD,/home/syslab/Downloads/0528/5.0.0/.rdma.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/8/include  -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Iubuntu/include  -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror-implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -Wno-int-in-bool-context -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wno-stringop-truncation -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -fmacro-prefix-map=./= -Wno-packed-not-aligned -I/home/syslab/Downloads/0528/5.0.0  -DMODULE  -DKBUILD_BASENAME='"rdma"' -DKBUILD_MODNAME='"nvme_rdma"' -c -o /home/syslab/Downloads/0528/5.0.0/rdma.o /home/syslab/Downloads/0528/5.0.0/rdma.c
 
-source_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o := /home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.c
+source_/home/syslab/Downloads/0528/5.0.0/rdma.o := /home/syslab/Downloads/0528/5.0.0/rdma.c
 
-deps_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o := \
+deps_/home/syslab/Downloads/0528/5.0.0/rdma.o := \
   include/linux/kconfig.h \
     $(wildcard include/config/cpu/big/endian.h) \
     $(wildcard include/config/booger.h) \
@@ -1371,7 +1371,7 @@ deps_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o := \
   include/uapi/rdma/rdma_user_cm.h \
   include/uapi/rdma/ib_user_sa.h \
   include/linux/nvme-rdma.h \
-  /home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme.h \
+  /home/syslab/Downloads/0528/5.0.0/nvme.h \
     $(wildcard include/config/nvme/multipath.h) \
     $(wildcard include/config/fault/injection/debug/fs.h) \
     $(wildcard include/config/nvm.h) \
@@ -1414,9 +1414,9 @@ deps_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o := \
     $(wildcard include/config/blk/sed/opal.h) \
   include/uapi/linux/sed-opal.h \
   include/linux/fault-inject.h \
-  /home/syslab/Downloads/linux-5.0/drivers/nvme/host/fabrics.h \
+  /home/syslab/Downloads/0528/5.0.0/fabrics.h \
   include/linux/inet.h \
 
-/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o: $(deps_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o)
+/home/syslab/Downloads/0528/5.0.0/rdma.o: $(deps_/home/syslab/Downloads/0528/5.0.0/rdma.o)
 
-$(deps_/home/syslab/Downloads/linux-5.0/drivers/nvme/host/rdma.o):
+$(deps_/home/syslab/Downloads/0528/5.0.0/rdma.o):

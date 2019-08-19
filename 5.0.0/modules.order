@@ -1,6 +1,6 @@
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-core.ko
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme.ko
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fabrics.ko
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-rdma.ko
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-fc.ko
-kernel//home/syslab/Downloads/linux-5.0/drivers/nvme/host/nvme-tcp.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme-core.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme-fabrics.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme-rdma.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme-fc.ko
+kernel//home/syslab/Downloads/0528/5.0.0/nvme-tcp.ko
